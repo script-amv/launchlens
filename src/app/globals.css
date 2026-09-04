@@ -10,3 +10,4 @@
 
 /* Example report: make the metrics readable at a glance. */
 .example-cats div{min-height:190px;align-items:center;justify-content:center;text-align:center;padding:24px 18px;gap:12px}.example-cats svg{width:22px;height:22px;stroke-width:2}.example-cats b{font-size:42px;line-height:1}.example-cats span{font-size:13px;font-weight:600;color:#c9d4cb}.example-score{justify-content:center}.example-score span,.example-score small{font-size:13px}.example-score b{font-size:86px}
+.example-content{padding:55px 0 100px}
