@@ -1,0 +1,4 @@
+export type Severity = "critical" | "high" | "medium" | "low";
+export type Finding = { id: string; title: string; severity: Severity; detail: string; action: string };
+export type Category = { score: number; label: string; summary: string };
+export type AuditReport = { id: string; url: string; hostname: string; createdAt: string; expiresAt: string; overallScore: number; categories: Record<"performance" | "seo" | "accessibility" | "bestPractices", Category>; metrics: { lcp?: string; cls?: string; inp?: string; fcp?: string }; metadata: { title?: string; description?: string; h1Count: number; hasViewport: boolean; hasCanonical: boolean; hasRobots: boolean; hasSitemap: boolean; hasHttps: boolean; finalUrl?: string }; findings: Finding[]; screenshots: { mobile?: string; desktop?: string }; source: "pagespeed" | "local" };
