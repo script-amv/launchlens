@@ -5,3 +5,5 @@
 
 /* Keep the primary action compact; it should not dominate the hero. */
 .audit-form-wrap{max-width:620px}.audit-form{padding:5px;border-radius:12px;box-shadow:0 12px 30px #18251d0d}.audit-form input{height:58px;padding:0 15px;font-size:15px}.audit-form button{padding:0 17px;border-radius:8px;font-size:13px;gap:8px}.form-error{margin:8px 8px 0}
+.sample{border-radius:18px;margin-bottom:98px;overflow:hidden}
+@media(max-width:760px){.sample{margin-bottom:64px;border-radius:14px}}
