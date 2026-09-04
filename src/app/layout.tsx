@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./report.css";
+import "./tweaks.css";
 
 export const metadata: Metadata = {
   title: "LaunchLens — Website health, made clear",
