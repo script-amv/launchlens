@@ -1,6 +1,7 @@
 .example-metric-rail{grid-template-columns:repeat(4,1fr)}
 .example-health-score .kicker{margin-bottom:16px;font:500 11px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.1em;color:#728018}
 .score-value{display:flex;align-items:baseline;gap:12px;white-space:nowrap}.example-health-score strong{line-height:.78}.example-health-score span{margin:0;font:500 16px 'DM Mono',monospace;color:#657369}
+.example-overview{display:block;padding:0}.overview-kicker{margin:0;padding:24px 0;border-bottom:1px solid var(--line)}.example-overview-body{display:grid;grid-template-columns:300px minmax(0,1fr);gap:72px;padding:48px 0 52px;align-items:start}.example-health-copy{align-self:start}
 .example-metric-rail div{min-height:150px;padding:25px 28px;grid-template-columns:24px 1fr;grid-template-rows:auto 1fr}.example-metric-rail svg{align-self:center}.example-metric-rail span{align-self:center}.example-metric-rail strong{align-self:end}
 .example-health-copy h2{white-space:pre-line}
 .report-view-actions{display:flex;justify-content:flex-end;padding-top:24px;margin-bottom:-15px}
@@ -8,4 +9,4 @@
 .audit-screenshot h2{font-size:clamp(30px,3.4vw,45px);letter-spacing:-.065em;line-height:1.05;margin:0}
 .audit-screenshot p:not(.kicker){color:var(--muted);font-size:14px;line-height:1.7;margin:18px 0 0}
 .audit-screenshot img{width:280px;border:7px solid var(--ink);border-radius:26px;justify-self:end}
-@media(max-width:760px){.example-health-score span{font-size:13px}.example-metric-rail{grid-template-columns:1fr 1fr}.example-metric-rail div{padding:20px}.example-metric-rail div:nth-child(2){border-right:0}.example-metric-rail div:nth-child(n+3){border-bottom:0}.report-view-actions{justify-content:flex-start;margin:0}.audit-screenshot{grid-template-columns:1fr;gap:30px;padding-top:55px}.audit-screenshot img{justify-self:start}}
+@media(max-width:760px){.example-overview-body{grid-template-columns:1fr;gap:34px;padding:38px 0}.example-health-score span{font-size:13px}.example-metric-rail{grid-template-columns:1fr 1fr}.example-metric-rail div{padding:20px}.example-metric-rail div:nth-child(2){border-right:0}.example-metric-rail div:nth-child(n+3){border-bottom:0}.report-view-actions{justify-content:flex-start;margin:0}.audit-screenshot{grid-template-columns:1fr;gap:30px;padding-top:55px}.audit-screenshot img{justify-self:start}}
