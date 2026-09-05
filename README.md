@@ -2,6 +2,8 @@
 
 **A polished website-health auditor that turns any public URL into a clear, shareable report.**
 
+[View the live product →](https://launchlens-zeta.vercel.app)
+
 LaunchLens is built for the moment a technical finding needs to become a useful client conversation. It combines Google Lighthouse lab data with direct, server-side checks and presents the result in an editorial report designed to be understood beyond an engineering team.
 
 ## What it does
