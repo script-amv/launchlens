@@ -20,11 +20,11 @@ export default function Home() {
       <p className="fine-print">No account required. Reports are private, shareable links and expire after 30 days.</p>
       <div className="hero-proof"><CheckCircle2 size={17} /> Real Lighthouse data <CheckCircle2 size={17} /> Mobile + desktop <CheckCircle2 size={17} /> PDF export</div>
     </SectionFrame>
-    <SectionFrame className="feature-section shell" label="One URL. A clearer next step.">
+    <SectionFrame className="how-it-works shell" label="How it works" id="how-it-works">
       <div className="section-intro"><h2>Technical insight without the technical fog.</h2></div>
       <div className="features">{features.map(([Icon, title, copy]) => <article className="feature-card" key={title as string}><Icon size={25} strokeWidth={1.7} /><h3>{title as string}</h3><p>{copy as string}</p></article>)}</div>
+      <div className="sample"><div><h2>A report your client<br />will understand.</h2><p>Start with the few changes most likely to improve a visitor&apos;s experience. Open the technical detail only when you need it.</p><Link href="/example" className="text-link">View an example report <ArrowUpRight size={16}/></Link></div><div className="score-preview"><p>Website health score</p><div className="score">84</div><span>Strong foundation</span><div className="preview-bars"><i /><i /><i /><i /></div></div></div>
     </SectionFrame>
-    <SectionFrame className="landing-sample-section shell" label="Built for useful conversations"><div className="sample"><div><h2>A report your client<br />will understand.</h2><p>Start with the few changes most likely to improve a visitor&apos;s experience. Open the technical detail only when you need it.</p><Link href="/example" className="text-link">View an example report <ArrowUpRight size={16}/></Link></div><div className="score-preview"><p>Website health score</p><div className="score">84</div><span>Strong foundation</span><div className="preview-bars"><i /><i /><i /><i /></div></div></div></SectionFrame>
     <SiteFooter />
   </main>;
 }
