@@ -3,7 +3,6 @@ import { assertPublicUrl } from "./url";
 import type { AuditReport, Category, Finding } from "./types";
 
 type Psi = { lighthouseResult?: { categories?: Record<string, { score?: number }>; audits?: Record<string, { numericValue?: number; displayValue?: string; details?: { data?: string } }> } };
-const timeout = AbortSignal.timeout(18_000);
 const score = (value?: number) => Math.round((value ?? 0) * 100);
 const formatMs = (ms?: number) => !ms ? undefined : ms > 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`;
 
@@ -11,14 +10,16 @@ async function pageSpeed(url: string, strategy: "mobile" | "desktop"): Promise<P
   const key = process.env.GOOGLE_PAGESPEED_API_KEY; if (!key) return null;
   const params = new URLSearchParams({ url, strategy, key, category: "PERFORMANCE" });
   ["ACCESSIBILITY", "SEO", "BEST_PRACTICES"].forEach(category => params.append("category", category));
-  const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`, { signal: timeout });
+  // A signal is single-use: creating it per request prevents every later audit
+  // from inheriting an already-expired timeout.
+  const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`, { signal: AbortSignal.timeout(18_000) });
   if (!res.ok) throw new Error(res.status === 429 ? "The audit service is busy. Please try again shortly." : "Google PageSpeed could not analyze this website.");
   return res.json();
 }
 
 async function inspect(url: string) {
   let current = url; let response: Response | undefined;
-  for (let hops = 0; hops <= 5; hops++) { response = await fetch(current, { signal: timeout, redirect: "manual", headers: { "user-agent": "LaunchLens/1.0 (+website health audit)" } }); if (![301, 302, 303, 307, 308].includes(response.status)) break; const location = response.headers.get("location"); if (!location || hops === 5) throw new Error("This website has an invalid redirect chain."); current = await assertPublicUrl(new URL(location, current).toString()); }
+  for (let hops = 0; hops <= 5; hops++) { response = await fetch(current, { signal: AbortSignal.timeout(18_000), redirect: "manual", headers: { "user-agent": "LaunchLens/1.0 (+website health audit)" } }); if (![301, 302, 303, 307, 308].includes(response.status)) break; const location = response.headers.get("location"); if (!location || hops === 5) throw new Error("This website has an invalid redirect chain."); current = await assertPublicUrl(new URL(location, current).toString()); }
   if (!response) throw new Error("We could not reach that website.");
   const html = (await response.text()).slice(0, 1_000_000); const finalUrl = response.url;
   const attr = (name: string, value: string) => new RegExp(`<[^>]+${name}=["'][^"']*${value}[^"']*["'][^>]*>`, "i").test(html);
