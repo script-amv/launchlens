@@ -9,5 +9,5 @@ export const exampleReport: AuditReport = {
     { id: "images", severity: "high", title: "Compress oversized homepage images", detail: "Large images delay the first meaningful view on mobile.", action: "Convert hero and gallery assets to AVIF or WebP, then serve responsive sizes." },
     { id: "alt", severity: "high", title: "Add alt text to product photography", detail: "Important visual content is not described for assistive technology.", action: "Write concise alt text for each product image that adds meaning." },
     { id: "contrast", severity: "medium", title: "Improve mobile text contrast", detail: "Some secondary text is difficult to read against its background.", action: "Increase contrast for muted copy to meet accessible contrast guidance." },
-  ], screenshots: { mobile: "https://image.thum.io/get/width/360/crop/640/https://brightfield.studio/" },
+  ], screenshots: { mobile: "/brightfield-mobile.png" },
 };
