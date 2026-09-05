@@ -10,11 +10,12 @@ async function pageSpeed(url: string, strategy: "mobile" | "desktop"): Promise<P
   const key = process.env.GOOGLE_PAGESPEED_API_KEY; if (!key) return null;
   const params = new URLSearchParams({ url, strategy, key, category: "PERFORMANCE" });
   ["ACCESSIBILITY", "SEO", "BEST_PRACTICES"].forEach(category => params.append("category", category));
-  // A signal is single-use: creating it per request prevents every later audit
-  // from inheriting an already-expired timeout.
-  const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`, { signal: AbortSignal.timeout(18_000) });
-  if (!res.ok) throw new Error(res.status === 429 ? "The audit service is busy. Please try again shortly." : "Google PageSpeed could not analyze this website.");
-  return res.json();
+  try {
+    // Lighthouse occasionally times out or rejects otherwise public sites. The
+    // direct audit remains useful, so a PageSpeed failure must not fail a report.
+    const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`, { signal: AbortSignal.timeout(18_000) });
+    return res.ok ? res.json() : null;
+  } catch { return null; }
 }
 
 async function inspect(url: string) {
@@ -38,7 +39,7 @@ async function inspect(url: string) {
 function localCategories(data: Awaited<ReturnType<typeof inspect>>): Record<"performance" | "seo" | "accessibility" | "bestPractices", Category> {
   const seo = Math.max(20, 100 - (!data.title ? 25 : 0) - (!data.description ? 20 : 0) - (!data.hasCanonical ? 10 : 0) - (!data.hasRobots ? 10 : 0) - (!data.hasSitemap ? 5 : 0));
   const access = Math.max(30, 100 - (!data.hasViewport ? 20 : 0) - Math.min(35, data.imagesWithoutAlt * 4));
-  return { performance: { score: 76, label: "Performance", summary: "Connect Google PageSpeed for measured lab data." }, seo: { score: seo, label: "SEO", summary: "On-page technical signals." }, accessibility: { score: access, label: "Accessibility", summary: "Basic content accessibility signals." }, bestPractices: { score: data.hasHttps ? 92 : 45, label: "Best practices", summary: "Security and browser-ready setup." } };
+  return { performance: { score: 76, label: "Performance", summary: "Lab data was unavailable for this audit." }, seo: { score: seo, label: "SEO", summary: "On-page technical signals." }, accessibility: { score: access, label: "Accessibility", summary: "Basic content accessibility signals." }, bestPractices: { score: data.hasHttps ? 92 : 45, label: "Best practices", summary: "Security and browser-ready setup." } };
 }
 
 export async function runAudit(input: string): Promise<AuditReport> {
