@@ -97,4 +97,4 @@ Deploy to Vercel as a Next.js project, then add the production environment varia
 
 ## License
 
-Private portfolio project. All rights reserved.
+Distributed under the [MIT License](LICENSE).
