@@ -10,3 +10,6 @@ create table if not exists public.audit_reports (
 create index if not exists audit_reports_expires_at_idx on public.audit_reports (expires_at);
 alter table public.audit_reports enable row level security;
 -- Reports are read and written only by the server-side service-role key.
+-- This is required when Supabase's "Automatically expose new tables" option is off.
+grant usage on schema public to service_role;
+grant select, insert, update, delete on table public.audit_reports to service_role;
