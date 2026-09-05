@@ -13,14 +13,14 @@ async function pageSpeed(url: string, strategy: "mobile" | "desktop"): Promise<P
   try {
     // Lighthouse occasionally times out or rejects otherwise public sites. The
     // direct audit remains useful, so a PageSpeed failure must not fail a report.
-    const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`, { signal: AbortSignal.timeout(18_000) });
+    const res = await fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?${params}`, { signal: AbortSignal.timeout(45_000) });
     return res.ok ? res.json() : null;
   } catch { return null; }
 }
 
 async function inspect(url: string) {
   let current = url; let response: Response | undefined;
-  for (let hops = 0; hops <= 5; hops++) { response = await fetch(current, { signal: AbortSignal.timeout(18_000), redirect: "manual", headers: { "user-agent": "LaunchLens/1.0 (+website health audit)" } }); if (![301, 302, 303, 307, 308].includes(response.status)) break; const location = response.headers.get("location"); if (!location || hops === 5) throw new Error("This website has an invalid redirect chain."); current = await assertPublicUrl(new URL(location, current).toString()); }
+  for (let hops = 0; hops <= 5; hops++) { response = await fetch(current, { signal: AbortSignal.timeout(15_000), redirect: "manual", headers: { "user-agent": "LaunchLens/1.0 (+website health audit)" } }); if (![301, 302, 303, 307, 308].includes(response.status)) break; const location = response.headers.get("location"); if (!location || hops === 5) throw new Error("This website has an invalid redirect chain."); current = await assertPublicUrl(new URL(location, current).toString()); }
   if (!response) throw new Error("We could not reach that website.");
   const html = (await response.text()).slice(0, 1_000_000); const finalUrl = response.url;
   const attr = (name: string, value: string) => new RegExp(`<[^>]+${name}=["'][^"']*${value}[^"']*["'][^>]*>`, "i").test(html);
