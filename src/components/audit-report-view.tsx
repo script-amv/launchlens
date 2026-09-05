@@ -1,20 +1,213 @@
-import { ArrowUpRight, CheckCircle2, Gauge, SearchCheck, ShieldCheck } from "lucide-react";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  Gauge,
+  SearchCheck,
+  ShieldCheck,
+} from "lucide-react";
 import type { AuditReport, Severity } from "@/lib/types";
 import { ReportActions } from "@/components/share-button";
 import { SectionFrame } from "@/components/section-frame";
 
-const labels = { performance: Gauge, seo: SearchCheck, accessibility: ShieldCheck, bestPractices: CheckCircle2 };
-const metricHelp = { lcp: "Largest Contentful Paint", inp: "Interaction to Next Paint", cls: "Cumulative Layout Shift", fcp: "First Contentful Paint" };
-const impact: Record<Severity, string> = { critical: "Critical", high: "High impact", medium: "Important", low: "Quick win" };
-function formatDate(value: string) { return new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(new Date(value)); }
-function siteName(hostname: string) { const name = hostname.replace(/^www\./i, "").split(".")[0] || hostname; return name.length > 24 ? `${name.slice(0, 23)}…` : name; }
+const labels = {
+  performance: Gauge,
+  seo: SearchCheck,
+  accessibility: ShieldCheck,
+  bestPractices: CheckCircle2,
+};
+const metricHelp = {
+  lcp: "Largest Contentful Paint",
+  inp: "Interaction to Next Paint",
+  cls: "Cumulative Layout Shift",
+  fcp: "First Contentful Paint",
+};
+const impact: Record<Severity, string> = {
+  critical: "Critical",
+  high: "High impact",
+  medium: "Important",
+  low: "Quick win",
+};
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(value));
+}
+function siteName(hostname: string) {
+  const name = hostname.replace(/^www\./i, "").split(".")[0] || hostname;
+  return name.length > 24 ? `${name.slice(0, 23)}…` : name;
+}
 export function AuditReportView({ report }: { report: AuditReport }) {
-  const heading = siteName(report.hostname); const linkedHost = report.url.replace(/^https?:\/\//, "");
-  return <article className="report-page shell">
-    <header className="report-masthead"><h1 title={report.hostname}>{heading}</h1><div className="audit-meta"><span>Audited {formatDate(report.createdAt)}</span><a href={report.url} target="_blank" rel="noreferrer" title={linkedHost}><span>{linkedHost}</span><ArrowUpRight size={14}/></a></div><ReportActions /></header>
-    <SectionFrame label="Website health" className="report-health"><div className="report-health-content"><div className="overview-body"><div className="health-score"><div className="score-value"><strong>{report.overallScore}</strong><span>/ out of 100</span></div></div><div className="health-copy"><h2>{report.overallScore >= 80 ? "Your site is in good shape.\nA few focused fixes will make it stronger." : "Your site has a clear path to improvement."}</h2><p>{report.findings.length ? "These are the highest-value actions based on the technical signals we found." : "The baseline checks passed. Keep monitoring performance as your site changes."}</p></div></div><div className="metric-rail" aria-label="Audit category scores">{Object.entries(report.categories).map(([key, category]) => { const Icon = labels[key as keyof typeof labels]; return <div key={key}><Icon size={20}/><span>{category.label}</span><strong>{category.score}</strong></div>; })}</div></div></SectionFrame>
-    <SectionFrame label="Where to start"><div className="report-section"><h2>{report.findings.length ? "Your highest-impact actions" : "No priority actions found"}</h2><p className="section-copy">{report.findings.length ? "Start here for the clearest improvement to your visitors’ experience." : "The automated baseline checks passed for this page."}</p></div>{report.findings.length > 0 && <ol className="priority-list">{report.findings.map((finding, index) => <li key={finding.id}><div className="priority-index"><span>0{index + 1}</span><span>{impact[finding.severity]}</span></div><div className="priority-content"><h3>{finding.title}</h3><p>{finding.detail}</p><div className="priority-action"><CheckCircle2 size={16}/><span>{finding.action}</span></div></div></li>)}</ol>}</SectionFrame>
-    <SectionFrame label="Evidence"><div className="report-evidence"><div className="report-section"><h2>Mobile experience.</h2><div className="vitals">{Object.entries(report.metrics).map(([key, value]) => <div key={key}><strong>{value || "—"}</strong><span>{key.toUpperCase()}</span><small>{metricHelp[key as keyof typeof metricHelp]}</small></div>)}</div><p className="source-note">{report.source === "pagespeed" ? "Lighthouse lab data on a simulated mobile connection." : "Live PageSpeed metrics were unavailable for this URL; this report uses direct website checks."}</p></div><div className="report-section technical"><h2>What we detected.</h2><dl><div><dt>HTTPS</dt><dd>{report.metadata.hasHttps ? <><CheckCircle2 size={15}/> Enabled</> : "Not detected"}</dd></div><div><dt>Page title</dt><dd>{report.metadata.title ? "Present" : "Missing"}</dd></div><div><dt>Canonical URL</dt><dd>{report.metadata.hasCanonical ? "Present" : "Missing"}</dd></div><div><dt>robots.txt</dt><dd>{report.metadata.hasRobots ? "Found" : "Not found"}</dd></div><div><dt>Sitemap</dt><dd>{report.metadata.hasSitemap ? "Found" : "Not found"}</dd></div></dl></div></div></SectionFrame>
-    <SectionFrame label="Visual check"><div className="audit-screenshot"><div><h2>Your website on mobile.</h2><p>{report.screenshots.mobile ? "Captured during this audit by Google Lighthouse." : "A mobile screenshot was not available for this audit."}</p></div>{report.screenshots.mobile ? <img src={report.screenshots.mobile} alt={`Mobile screenshot of ${report.hostname}`} /> : <div className="screenshot-unavailable" aria-label="Mobile screenshot unavailable">No preview available</div>}</div></SectionFrame>
-  </article>;
+  const heading = siteName(report.hostname);
+  const linkedHost = report.url.replace(/^https?:\/\//, "");
+  return (
+    <article className="report-page shell">
+      <header className="report-masthead">
+        <h1 title={report.hostname}>{heading}</h1>
+        <div className="audit-meta">
+          <span>Audited {formatDate(report.createdAt)}</span>
+          <a
+            href={report.url}
+            target="_blank"
+            rel="noreferrer"
+            title={linkedHost}
+          >
+            <span>{linkedHost}</span>
+            <ArrowUpRight size={14} />
+          </a>
+        </div>
+        <ReportActions />
+      </header>
+      <SectionFrame label="Website health" className="report-health">
+        <div className="report-health-content">
+          <div className="overview-body">
+            <div className="health-score">
+              <div className="score-value">
+                <strong>{report.overallScore}</strong>
+                <span>/ out of 100</span>
+              </div>
+            </div>
+            <div className="health-copy">
+              <h2>
+                {report.overallScore >= 80
+                  ? "Your site is in good shape.\nA few focused fixes will make it stronger."
+                  : "Your site has a clear path to improvement."}
+              </h2>
+              <p>
+                {report.findings.length
+                  ? "These are the highest-value actions based on the technical signals we found."
+                  : "The baseline checks passed. Keep monitoring performance as your site changes."}
+              </p>
+            </div>
+          </div>
+          <div className="metric-rail" aria-label="Audit category scores">
+            {Object.entries(report.categories).map(([key, category]) => {
+              const Icon = labels[key as keyof typeof labels];
+              return (
+                <div key={key}>
+                  <Icon size={20} />
+                  <span>{category.label}</span>
+                  <strong>{category.score}</strong>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </SectionFrame>
+      <SectionFrame label="Where to start">
+        <div className="report-section">
+          <h2>
+            {report.findings.length
+              ? "Your highest-impact actions"
+              : "No priority actions found"}
+          </h2>
+          <p className="section-copy">
+            {report.findings.length
+              ? "Start here for the clearest improvement to your visitors’ experience."
+              : "The automated baseline checks passed for this page."}
+          </p>
+        </div>
+        {report.findings.length > 0 && (
+          <ol className="priority-list">
+            {report.findings.map((finding, index) => (
+              <li key={finding.id}>
+                <div className="priority-index">
+                  <span>0{index + 1}</span>
+                  <span>{impact[finding.severity]}</span>
+                </div>
+                <div className="priority-content">
+                  <h3>{finding.title}</h3>
+                  <p>{finding.detail}</p>
+                  <div className="priority-action">
+                    <CheckCircle2 size={16} />
+                    <span>{finding.action}</span>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </SectionFrame>
+      <SectionFrame label="Evidence">
+        <div className="report-evidence">
+          <div className="report-section">
+            <h2>Mobile experience.</h2>
+            <div className="vitals">
+              {Object.entries(report.metrics).map(([key, value]) => (
+                <div key={key}>
+                  <strong>{value || "—"}</strong>
+                  <span>{key.toUpperCase()}</span>
+                  <small>{metricHelp[key as keyof typeof metricHelp]}</small>
+                </div>
+              ))}
+            </div>
+            <p className="source-note">
+              {report.source === "pagespeed"
+                ? "Lighthouse lab data on a simulated mobile connection."
+                : "Live PageSpeed metrics were unavailable for this URL; this report uses direct website checks."}
+            </p>
+          </div>
+          <div className="report-section technical">
+            <h2>What we detected.</h2>
+            <dl>
+              <div>
+                <dt>HTTPS</dt>
+                <dd>
+                  {report.metadata.hasHttps ? (
+                    <>
+                      <CheckCircle2 size={15} /> Enabled
+                    </>
+                  ) : (
+                    "Not detected"
+                  )}
+                </dd>
+              </div>
+              <div>
+                <dt>Page title</dt>
+                <dd>{report.metadata.title ? "Present" : "Missing"}</dd>
+              </div>
+              <div>
+                <dt>Canonical URL</dt>
+                <dd>{report.metadata.hasCanonical ? "Present" : "Missing"}</dd>
+              </div>
+              <div>
+                <dt>robots.txt</dt>
+                <dd>{report.metadata.hasRobots ? "Found" : "Not found"}</dd>
+              </div>
+              <div>
+                <dt>Sitemap</dt>
+                <dd>{report.metadata.hasSitemap ? "Found" : "Not found"}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </SectionFrame>
+      <SectionFrame label="Visual check">
+        <div className="audit-screenshot">
+          <div>
+            <h2>Your website on mobile.</h2>
+            <p>
+              {report.screenshots.mobile
+                ? "Captured during this audit by Google Lighthouse."
+                : "A mobile screenshot was not available for this audit."}
+            </p>
+          </div>
+          {report.screenshots.mobile ? (
+            <img
+              src={report.screenshots.mobile}
+              alt={`Mobile screenshot of ${report.hostname}`}
+            />
+          ) : (
+            <div
+              className="screenshot-unavailable"
+              aria-label="Mobile screenshot unavailable"
+            >
+              No preview available
+            </div>
+          )}
+        </div>
+      </SectionFrame>
+    </article>
+  );
 }

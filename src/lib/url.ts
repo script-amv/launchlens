@@ -1,8 +1,68 @@
 import { z } from "zod";
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
-const unsafeHosts = ["localhost", "0.0.0.0", "127.", "10.", "192.168.", "169.254.", "172.16.", "172.17.", "172.18.", "172.19.", "172.2", "::1", "fc", "fd"];
-export const auditRequestSchema = z.object({ url: z.string().trim().min(3).max(2048) });
-export function normalizeUrl(value: string) { const candidate = /^https?:\/\//i.test(value) ? value : `https://${value}`; const url = new URL(candidate); if (!/^https?:$/.test(url.protocol) || url.username || url.password || unsafeHosts.some(h => url.hostname.toLowerCase().startsWith(h)) || url.hostname.endsWith(".local")) throw new Error("Please enter a public http(s) website URL."); url.hash = ""; return url.toString(); }
-function isPrivateAddress(address: string) { if (isIP(address) === 6) return address === "::1" || address.startsWith("fc") || address.startsWith("fd") || address.startsWith("fe80:") || address.startsWith("::ffff:127."); const parts = address.split(".").map(Number); return parts[0] === 0 || parts[0] === 10 || parts[0] === 127 || (parts[0] === 100 && parts[1] >= 64 && parts[1] <= 127) || (parts[0] === 169 && parts[1] === 254) || (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) || (parts[0] === 192 && parts[1] === 168) || (parts[0] === 198 && (parts[1] === 18 || parts[1] === 19)); }
-export async function assertPublicUrl(value: string) { const normalized = normalizeUrl(value); const url = new URL(normalized); const records = await lookup(url.hostname, { all: true, verbatim: true }); if (!records.length || records.some(record => isPrivateAddress(record.address))) throw new Error("This address is not available for public auditing."); return normalized; }
+const unsafeHosts = [
+  "localhost",
+  "0.0.0.0",
+  "127.",
+  "10.",
+  "192.168.",
+  "169.254.",
+  "172.16.",
+  "172.17.",
+  "172.18.",
+  "172.19.",
+  "172.2",
+  "::1",
+  "fc",
+  "fd",
+];
+export const auditRequestSchema = z.object({
+  url: z.string().trim().min(3).max(2048),
+});
+export function normalizeUrl(value: string) {
+  const candidate = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  const url = new URL(candidate);
+  if (
+    !/^https?:$/.test(url.protocol) ||
+    url.username ||
+    url.password ||
+    unsafeHosts.some((h) => url.hostname.toLowerCase().startsWith(h)) ||
+    url.hostname.endsWith(".local")
+  )
+    throw new Error("Please enter a public http(s) website URL.");
+  url.hash = "";
+  return url.toString();
+}
+function isPrivateAddress(address: string) {
+  if (isIP(address) === 6)
+    return (
+      address === "::1" ||
+      address.startsWith("fc") ||
+      address.startsWith("fd") ||
+      address.startsWith("fe80:") ||
+      address.startsWith("::ffff:127.")
+    );
+  const parts = address.split(".").map(Number);
+  return (
+    parts[0] === 0 ||
+    parts[0] === 10 ||
+    parts[0] === 127 ||
+    (parts[0] === 100 && parts[1] >= 64 && parts[1] <= 127) ||
+    (parts[0] === 169 && parts[1] === 254) ||
+    (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) ||
+    (parts[0] === 192 && parts[1] === 168) ||
+    (parts[0] === 198 && (parts[1] === 18 || parts[1] === 19))
+  );
+}
+export async function assertPublicUrl(value: string) {
+  const normalized = normalizeUrl(value);
+  const url = new URL(normalized);
+  const records = await lookup(url.hostname, { all: true, verbatim: true });
+  if (
+    !records.length ||
+    records.some((record) => isPrivateAddress(record.address))
+  )
+    throw new Error("This address is not available for public auditing.");
+  return normalized;
+}
