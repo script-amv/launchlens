@@ -46,7 +46,10 @@ export function AuditReportView({ report }: { report: AuditReport }) {
       <header className="report-masthead">
         <h1 title={report.hostname}>{heading}</h1>
         <div className="audit-meta">
-          <span>Audited {formatDate(report.createdAt)}</span>
+          <span className="audit-date">
+            <span className="audit-date-prefix">Audited </span>
+            {formatDate(report.createdAt)}
+          </span>
           <a
             href={report.url}
             target="_blank"
