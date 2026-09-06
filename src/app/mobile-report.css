@@ -1,0 +1,131 @@
+/* A deliberate phone composition for reports, independent of desktop grids. */
+@media (max-width: 760px) {
+  .report-masthead {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: var(--s4) var(--s3);
+    padding: var(--s6) 0;
+  }
+
+  .report-masthead h1 {
+    grid-column: 1;
+    grid-row: 1;
+    max-width: none;
+    font-size: clamp(32px, 10vw, 42px);
+    line-height: 1;
+  }
+
+  .report-masthead .audit-meta {
+    grid-column: 2;
+    grid-row: 1;
+    max-width: 112px;
+    margin: 0;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .report-masthead .report-actions {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: var(--s3);
+    margin: 0;
+  }
+
+  .report-masthead .report-actions .button-secondary {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    padding: 0 var(--s3);
+    white-space: nowrap;
+  }
+
+  .report-page .report-health .overview-body {
+    grid-template-columns: 1fr;
+    gap: var(--s5);
+    padding: 0;
+  }
+
+  .report-health .health-copy {
+    max-width: 34rem;
+  }
+
+  .report-health .health-copy h2 {
+    font-size: clamp(32px, 9vw, 38px);
+  }
+
+  .report-health .metric-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .report-health .metric-rail > div {
+    min-height: 124px;
+    padding: var(--s5);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .report-health .metric-rail > div:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .report-health .metric-rail > div:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+
+  .report-health .metric-rail strong {
+    font-size: 42px;
+  }
+
+  .priority-list {
+    margin-top: var(--s6);
+  }
+
+  .priority-list li {
+    grid-template-columns: 1fr;
+    gap: var(--s3);
+    padding: var(--s6) 0;
+  }
+
+  .priority-index {
+    padding-top: 0;
+  }
+
+  .priority-content h3 {
+    font-size: 20px;
+  }
+
+  .priority-content p {
+    margin: var(--s2) 0;
+    line-height: 1.6;
+  }
+
+  .priority-action {
+    grid-template-columns: 18px minmax(0, 1fr);
+    margin-top: var(--s3);
+    font-size: var(--text-body);
+    line-height: 1.5;
+  }
+
+  .report-page .report-evidence,
+  .report-page .audit-screenshot {
+    grid-template-columns: 1fr;
+    gap: var(--s7);
+  }
+
+  .report-page .technical {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .report-page .audit-screenshot img,
+  .report-page .screenshot-unavailable {
+    justify-self: start;
+    width: min(280px, 100%);
+  }
+}

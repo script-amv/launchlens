@@ -3,6 +3,7 @@ import "./globals.css";
 import "./report.css";
 import "./tweaks.css";
 import "./responsive.css";
+import "./mobile-report.css";
 
 export const metadata: Metadata = {
   title: "LaunchLens — Website health, made clear",
